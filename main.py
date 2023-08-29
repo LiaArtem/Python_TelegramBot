@@ -1,4 +1,5 @@
 import time
+import json
 import telebot
 from telebot import types
 import emoji  # https://carpedm20.github.io/emoji/
@@ -7,7 +8,10 @@ from curs import Read_curs
 from convert_curs import Read_convert_curs
 
 # read token to access the HTTP API
-token_key = open(file='token.txt', mode="r", encoding="utf8").read()
+file = open(file='secret_key.json', mode="r", encoding="utf8")
+data = json.loads(file.read())
+token_key = data['telegram_key']
+
 bot = telebot.TeleBot(token_key)
 bot.set_my_commands([
     telebot.types.BotCommand("/start", "Головне Меню"),
