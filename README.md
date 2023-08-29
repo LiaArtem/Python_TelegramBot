@@ -3,17 +3,18 @@ Python Telegram Bot
 
 IDE - PyCharm Community Edition
 
-Настройка:
- - Откройте Telegram
- - Найдите @BotFather и начните беседу.
- - Отправьте команду /newbot и следуйте инструкциям.
+Налаштування:
+ - Відкрийте Telegram
+ - Знайдіть @BotFather і почніть розмову.
+ - Надішліть команду /newbot і дотримуйтесь інструкцій.
  - Alright, a new bot. How are we going to call it? Please choose a name for your bot.
-   - Указываем имя: LiaArtemTestBot
+   - Вказуємо ім'я: LiaArtemTestBot
  - Good. Now let's choose a username for your bot. It must end in `bot`. Like this, for example: TetrisBot or tetris_bot.
-   - Указываем имя: LiaArtemTestBot
+   - Вказуємо ім'я: LiaArtemTestBot
  - Use this token to access the HTTP API:
-   - Получаем токен, его будем использовать для подключения
- - Ссылка на бот - t.me/LiaArtemTestBot
+   - Отримуємо токен, його використовуватимемо для підключення
+   - Зберігаємо токен у файл token.txt і кладемо в корінь (формат UTF8)
+ - Посилання на бот - t.me/LiaArtemTestBot
 
 У командному рядку терміналу IDE
 1) Додаємо бібліотеки
