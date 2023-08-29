@@ -1,5 +1,5 @@
 # Python_TelegramBot
-Python Telegram Bot
+Python Telegram Bot (exchange rates, exchange rate conversion)
 
 IDE - PyCharm Community Edition
 
