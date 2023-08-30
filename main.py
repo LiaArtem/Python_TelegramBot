@@ -6,6 +6,7 @@ import emoji  # https://carpedm20.github.io/emoji/
 from datetime import date
 from curs import Read_curs
 from convert_curs import Read_convert_curs
+from weather import Read_weather
 
 # read token to access the HTTP API
 file = open(file='secret_key.json', mode="r", encoding="utf8")
@@ -16,7 +17,8 @@ bot = telebot.TeleBot(token_key)
 bot.set_my_commands([
     telebot.types.BotCommand("/start", "Головне Меню"),
     telebot.types.BotCommand("/curs", "Курси валют"),
-    telebot.types.BotCommand("/convert_curs", "Конвертер валют")
+    telebot.types.BotCommand("/convert_curs", "Конвертер валют"),
+    telebot.types.BotCommand("/weather", "Погода")
 ])
 
 # global variables
@@ -52,6 +54,14 @@ def convert_curs(message):
 
 
 #########################################################################
+# commands=['weather']
+#########################################################################
+@bot.message_handler(commands=['weather'])
+def convert_curs(message):
+    on_click_start(message)
+
+
+#########################################################################
 # global menu
 #########################################################################
 def on_global_menu(message, message_text):
@@ -82,15 +92,19 @@ def on_click_global(message):
 #########################################################################
 def on_click_start(message):
     if message.text.endswith('Курси валют') or message.text == "/curs":
-        # выводим новое меню по курсам валют
+        # выводим новое меню
         on_curs_menu(message, f'{emoji.emojize(":heavy_dollar_sign:")} Оберіть валюту')
-        bot.register_next_step_handler(message, on_click_curs)  # следующий шаг обработка курсов
+        bot.register_next_step_handler(message, on_click_curs)  # следующий шаг обработки
 
     elif message.text.endswith('Конвертер валют') or message.text == "/convert_curs":
-        # убираем главное окно
-        # выводим новое меню по конвертеру валют
+        # выводим новое меню
         on_convert_curs_menu(message, f'{emoji.emojize(":heavy_dollar_sign:")} Оберіть валюти')
-        bot.register_next_step_handler(message, on_click_convert_curs)  # следующий шаг обработка конвертации курсов
+        bot.register_next_step_handler(message, on_click_convert_curs)  # следующий шаг обработки
+
+    elif message.text.endswith('Погода') or message.text == "/weather":
+        # выводим новое меню
+        on_weather_menu(message, f'{emoji.emojize(":heavy_dollar_sign:")} Оберіть місто')
+        bot.register_next_step_handler(message, on_click_weather)  # следующий шаг обработки
 
     else:
         bot.register_next_step_handler(message, on_click_start)  # следующий шаг обработки
@@ -243,9 +257,71 @@ def click_convert_curs_others(message):
         #
         bot.send_message(message.chat.id, 'Введіть сумму')
         bot.register_next_step_handler(message, click_convert_curs_amount)
-    except Exception:
+    except Exception as err_message:
         bot.send_message(message.chat.id, 'Введені некорректні коди валют для конвертації (наприклад USD/EUR)')
         bot.register_next_step_handler(message, click_convert_curs_others)
+        print(err_message)
+
+
+#########################################################################
+# weather menu
+#########################################################################
+def on_weather_menu(message, message_text):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+    btn1 = types.KeyboardButton('Київ')
+    btn2 = types.KeyboardButton('Херсон')
+    markup.row(btn1, btn2)
+    btn1 = types.KeyboardButton('Одеса')
+    btn2 = types.KeyboardButton('Львів')
+    markup.row(btn1, btn2)
+    btn1 = types.KeyboardButton('Інше місто')
+    btn2 = types.KeyboardButton(f'{emoji.emojize(":house:")} Головне Меню')
+    markup.row(btn1, btn2)
+    bot.send_message(message.chat.id, message_text, parse_mode='html', reply_markup=markup)
+
+
+#########################################################################
+# weather
+#########################################################################
+def on_click_weather(message):
+    if message.text.endswith('Головне Меню'):
+        # Возврат в главное меню
+        on_click_global(message)
+    elif message.text != 'Інше місто':
+        p = Read_weather(message.text)
+        if p.city_not_found:
+            bot.send_message(message.chat.id, 'Місто ' + message.text + ' не знайдене')
+        elif not p.city_not_found and p.text_error != "":
+            bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+            on_click_global(message)
+        else:
+            m_message = p.text_result
+            # вызов меню погоды для повторного выбора
+            on_weather_menu(message, m_message)
+            bot.register_next_step_handler(message, on_click_weather)  # следующий шаг обработки
+
+    elif message.text == 'Інше місто':
+        bot.send_message(message.chat.id, 'Введіть назву міста')
+        bot.register_next_step_handler(message, click_weather_others)
+
+
+#########################################################################
+# weather
+#########################################################################
+def click_weather_others(message):
+    p = Read_weather(message.text)
+    if p.city_not_found:
+        bot.send_message(message.chat.id, 'Місто ' + message.text + ' не знайдене')
+        bot.send_message(message.chat.id, 'Введіть нову назву міста (укр., eng. ...)')
+        bot.register_next_step_handler(message, click_weather_others)
+    elif not p.city_not_found and p.text_error != "":
+        bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+        on_click_global(message)
+    else:
+        m_message = p.text_result
+        # вызов меню погоды для повторного выбора
+        on_weather_menu(message, m_message)
+        bot.register_next_step_handler(message, on_click_weather)  # следующий шаг обработки
 
 
 ########################################################
