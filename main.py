@@ -70,7 +70,7 @@ def on_global_menu(message, message_text):
     btn2 = types.KeyboardButton(f'{emoji.emojize(":currency_exchange:")} Конвертер валют')
     markup.add(btn1, btn2)
     btn1 = types.KeyboardButton(f'{emoji.emojize(":rolled-up_newspaper:")} Цінні папери')
-    btn2 = types.KeyboardButton(f'{emoji.emojize(":check_box_with_check:")} Запроси у ЄРБ')
+    btn2 = types.KeyboardButton(f'{emoji.emojize(":check_box_with_check:")} Виконавчі провадження')
     markup.add(btn1, btn2)
     btn1 = types.KeyboardButton(f'{emoji.emojize(":sun_behind_small_cloud:")} Погода')
     btn2 = types.KeyboardButton(f'{emoji.emojize(":credit_card:")} Меню оплати')
