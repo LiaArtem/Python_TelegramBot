@@ -1,6 +1,7 @@
 from currency_converter import CurrencyConverter
 
 
+# Функция реализации конвертации курсов валют
 class Read_convert_curs:
     def __init__(self, amount, curr_code_from, curr_code_to):
         self.text_error = ""

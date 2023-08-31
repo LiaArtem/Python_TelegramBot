@@ -5,6 +5,7 @@ import urllib.request
 import xmltodict
 
 
+# Функция получения курсов валют
 class Read_curs:
     def __init__(self, date_cred, curr_code):
         self.text_error = ""

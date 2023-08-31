@@ -263,6 +263,7 @@ def get_name_country(country_code):
     return country_name
 
 
+# Функция получения погоды с сайта openweathermap.org
 class Read_weather:
     def __init__(self, city_name):
         self.city_not_found = False
