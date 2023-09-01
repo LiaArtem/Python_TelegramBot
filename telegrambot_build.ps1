@@ -1,0 +1,1 @@
+docker build -t "telegrambot:2023-latest" .
