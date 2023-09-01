@@ -1,5 +1,5 @@
 # Python_TelegramBot
-Python Telegram Bot (exchange rates, exchange rate conversion, weather, unified register of debtors)
+Python Telegram Bot (exchange rates, exchange rate conversion, weather, unified register of debtors, security)
 
 IDE - PyCharm Community Edition
 
