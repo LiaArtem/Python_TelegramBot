@@ -1,0 +1,1 @@
+docker run --name TelegramBotContainer --restart=always -d telegrambot:2023-latest
