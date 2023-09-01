@@ -95,8 +95,7 @@ def on_global_menu(message, message_text):
     btn2 = types.KeyboardButton(f'{emoji.emojize(":check_box_with_check:")} Виконавчі провадження')
     markup.add(btn1, btn2)
     btn1 = types.KeyboardButton(f'{emoji.emojize(":sun_behind_small_cloud:")} Погода')
-    btn2 = types.KeyboardButton(f'{emoji.emojize(":credit_card:")} Меню оплати')
-    markup.add(btn1, btn2)
+    markup.add(btn1)
     bot.send_message(message.chat.id, message_text, parse_mode='html', reply_markup=markup)
 
 
