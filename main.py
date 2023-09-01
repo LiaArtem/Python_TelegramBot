@@ -112,6 +112,9 @@ def on_click_global(message):
 # on_click_start
 #########################################################################
 def on_click_start(message):
+    if message.text.endswith('Головне Меню') or message.text.lower() == "/start":
+        start(message)
+
     if message.text.endswith('Курси валют') or message.text.lower() == "/curs":
         # выводим новое меню
         on_curs_menu(message, f'{emoji.emojize(":heavy_dollar_sign:")} Оберіть валюту')
