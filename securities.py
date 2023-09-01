@@ -5,7 +5,7 @@ import urllib.request
 from datetime import date
 
 
-def get_name_security_type(security_type):
+def get_name_securities_type(securities_type):
     m = {
         '1': 'Довгострокові',
         '2': 'Довгострокові з індексованою вартістю',
@@ -15,21 +15,21 @@ def get_name_security_type(security_type):
         '6': 'OЗДП%'
     }
     try:
-        security_name = m[security_type]
+        securities_name = m[securities_type]
     except Exception as err:
-        security_name = security_type
+        securities_name = securities_type
         print(err)
-    return security_name
+    return securities_name
 
 
 # Функция получения данных о ценных бумагах
-class Read_ISIN_Security:
-    def __init__(self, security_type, curr_code, security_isin, is_coup_period):
+class Read_ISIN_Securities:
+    def __init__(self, securities_type, curr_code, securities_isin, is_coup_period):
         self.text_error = ""
         self.text_result = ""
         try:
             # connect sqlite3
-            con = sqlite3.connect("security.db")
+            con = sqlite3.connect("securities.db")
             cursor = con.cursor()
             cursor.execute("""CREATE TABLE IF NOT EXISTS SECUR_ISIN
                             (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,                               
@@ -131,16 +131,16 @@ class Read_ISIN_Security:
                         'UPDATE SECUR_ISIN SET FAIR_DATE = ?, FAIR_VALUE = ? WHERE ISIN = ?', params)
 
             # Получить данные
-            if security_isin == "":
-                security_name = get_name_security_type(security_type)
-                params = (security_name, curr_code)
-                if security_name.find("%") >= 0:
+            if securities_isin == "":
+                securities_name = get_name_securities_type(securities_type)
+                params = (securities_name, curr_code)
+                if securities_name.find("%") >= 0:
                     cursor.execute("SELECT * FROM SECUR_ISIN S WHERE S.CPDESCR like ? AND S.CURRENCY_CODE = ?", params)
                 else:
                     cursor.execute("SELECT * FROM SECUR_ISIN S WHERE S.CPDESCR = ? AND S.CURRENCY_CODE = ?", params)
                 rows = cursor.fetchall()
             else:
-                params = (security_isin,)
+                params = (securities_isin,)
                 cursor.execute("SELECT * FROM SECUR_ISIN S WHERE S.ISIN = ?", params)
                 rows = cursor.fetchall()
             buff = ""
