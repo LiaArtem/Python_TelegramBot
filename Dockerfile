@@ -8,8 +8,9 @@ RUN mkdir -p /usr/src/app/database/
 # copy project
 COPY ./*.py /usr/src/app/
 COPY ./service/*.py /usr/src/app/service/
-COPY ./*.json /usr/src/app/
 COPY ./database/*.json /usr/src/app/database/
+COPY ./secret_key /usr/src/app/
+
 
 # install dependencies
 RUN pip install pyTelegramBotAPI

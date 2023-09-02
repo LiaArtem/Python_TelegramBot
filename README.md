@@ -13,11 +13,10 @@ IDE - PyCharm Community Edition
    - Вказуємо ім'я: LiaArtemTestBot або інше
  - Use this token to access the HTTP API:
    - Отримуємо токен, його використовуватимемо для підключення
-   - Зберігаємо токен у файл secret_key.json -> "telegram_key" і кладемо в корінь (формат UTF8)
-     {
-      "telegram_key": "xxxxxxxx",
-      "openweathermap_key": "yyyyyyy"
-     }
+   - Зберігаємо токени у файл secret_key і кладемо в корінь (формат UTF8)
+     TELEGRAM_TOKEN=xxx
+     TELEGRAM_ADMIN_CHAT_ID=1111111
+     OPENWEATHERMAP_TOKEN=yyyyyy
  - Посилання на бот - t.me/LiaArtemTestBot або інше
 
 У командному рядку терміналу IDE
