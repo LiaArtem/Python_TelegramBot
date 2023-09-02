@@ -1,22 +1,17 @@
 import time
-import json
 import telebot
 from telebot import types
 import emoji  # https://carpedm20.github.io/emoji/
 from datetime import date
 from datetime import datetime
-from curs import Read_curs
-from convert_curs import Read_convert_curs
-from weather import Read_weather
-from erb import Read_erb
-from securities import Read_ISIN_Securities, get_name_securities_type
+from service.curs import Read_curs
+from service.convert_curs import Read_convert_curs
+from service.weather import Read_weather
+from service.erb import Read_erb
+from service.securities import Read_ISIN_Securities, get_name_securities_type
+from settings import settings
 
-# read token to access the HTTP API
-file = open(file='secret_key.json', mode="r", encoding="utf8")
-data = json.loads(file.read())
-token_key = data['telegram_key']
-
-bot = telebot.TeleBot(token_key)
+bot = telebot.TeleBot(settings.bots.TELEGRAM_TOKEN)
 bot.set_my_commands([
     telebot.types.BotCommand("/start", "Головне Меню"),
     telebot.types.BotCommand("/curs", "Курси валют"),

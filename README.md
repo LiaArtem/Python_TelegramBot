@@ -27,6 +27,7 @@ IDE - PyCharm Community Edition
 -> pip install xmltodict
 -> pip install CurrencyConverter
 -> pip install requests
+-> pip install environs
 
 Розгортання у Docker
 -> Запустити .\Docker\telegrambot_docker.bat

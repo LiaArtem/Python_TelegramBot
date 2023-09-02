@@ -1,5 +1,37 @@
 import json
 import requests
+from settings import settings
+
+
+# Функция получения погоды с сайта openweathermap.org
+class Read_weather:
+    def __init__(self, city_name):
+        self.city_not_found = False
+        self.text_error = ""
+        self.text_result = ""
+        try:
+            url = (f'https://api.openweathermap.org/data/2.5/weather?q={city_name}&units=metric&lang=ua&appid='
+                   f'{settings.bots.OPENWEATHERMAP_TOKEN}')
+            response = requests.get(url)
+            data = json.loads(response.text)
+            if str(data['cod']) == "200":
+                self.text_result = ("Місто - " + str(city_name) + " (знайдене - " + str(data['name']) +
+                                    "(" + str(get_name_country(data['sys']['country'])) + "))\n" +
+                                    "Температура: " + str(data['main']['temp']) +
+                                    " °C (min: " + str(data['main']['temp_min']) +
+                                    " °C, max: " + str(data['main']['temp_max']) + " °C)\n" +
+                                    "Швидкість вітру: " + str(data['wind']['speed']) + " m/c\n" +
+                                    "Вологість: " + str(data['main']['humidity']) + " %"
+                                    )
+            elif str(data['cod']) == "404":
+                self.city_not_found = True
+                self.text_error = 'Ошибка = ' + str(data['cod']) + ' ' + str(data['message'])
+            else:
+                self.text_error = 'Ошибка = ' + str(data['cod']) + ' ' + str(data['message'])
+
+        except Exception as err_curs:
+            self.text_error = err_curs
+            print(self.text_error)
 
 
 def get_name_country(country_code):
@@ -261,39 +293,3 @@ def get_name_country(country_code):
         country_name = country_code
         print(err)
     return country_name
-
-
-# Функция получения погоды с сайта openweathermap.org
-class Read_weather:
-    def __init__(self, city_name):
-        self.city_not_found = False
-        self.text_error = ""
-        self.text_result = ""
-        try:
-            # read token to access the HTTP API
-            file = open(file='secret_key.json', mode="r", encoding="utf8")
-            data = json.loads(file.read())
-            token_key = data['openweathermap_key']
-
-            url = (f'https://api.openweathermap.org/data/2.5/weather?q={city_name}&units=metric&lang=ua&appid='
-                   f'{token_key}')
-            response = requests.get(url)
-            data = json.loads(response.text)
-            if str(data['cod']) == "200":
-                self.text_result = ("Місто - " + str(city_name) + " (знайдене - " + str(data['name']) +
-                                    "(" + str(get_name_country(data['sys']['country'])) + "))\n" +
-                                    "Температура: " + str(data['main']['temp']) +
-                                    " °C (min: " + str(data['main']['temp_min']) +
-                                    " °C, max: " + str(data['main']['temp_max']) + " °C)\n" +
-                                    "Швидкість вітру: " + str(data['wind']['speed']) + " m/c\n" +
-                                    "Вологість: " + str(data['main']['humidity']) + " %"
-                                    )
-            elif str(data['cod']) == "404":
-                self.city_not_found = True
-                self.text_error = 'Ошибка = ' + str(data['cod']) + ' ' + str(data['message'])
-            else:
-                self.text_error = 'Ошибка = ' + str(data['cod']) + ' ' + str(data['message'])
-
-        except Exception as err_curs:
-            self.text_error = err_curs
-            print(self.text_error)

@@ -28,9 +28,10 @@ class Read_ISIN_Securities:
     def __init__(self, securities_type, curr_code, securities_isin, is_coup_period):
         self.text_error = ""
         self.text_result = ""
+        con = None
         try:
             # connect sqlite3
-            con = sqlite3.connect("securities.db")
+            con = sqlite3.connect("./database/securities.db")
             cursor = con.cursor()
             cursor.execute("""CREATE TABLE IF NOT EXISTS SECUR_ISIN
                             (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,                               
@@ -149,13 +150,13 @@ class Read_ISIN_Securities:
                 rows = cursor.fetchall()
             buff = ""
             for row_count, row in enumerate(rows):
-                if row[8] == date.today().strftime("%Y-%m-%d"):
-                    date_arc = ""
+                if row[8] is None or row[9] is None or row[8] == date.today().strftime("%Y-%m-%d"):
+                    fair_value = ""
                 else:
-                    date_arc = " за " + row[8]
+                    fair_value = str(row[9]) + " за " + str(row[8])
                 buff = buff + ("ISIN: " + str(row[1]) + "\n"
                                + "Номінал: " + str(row[2]) + "\n"
-                               + "Вартість: " + str(row[9]) + date_arc + "\n"
+                               + "Вартість: " + fair_value + "\n"
                                + "Валюта: " + str(row[6]) + "\n"
                                + "% ставка: " + str(row[3]) + "\n"
                                + "Дата виплати: " + str(row[4]) + "\n"
@@ -179,5 +180,6 @@ class Read_ISIN_Securities:
 
             self.text_result = buff
         except Exception as err_message:
+            con.close()
             self.text_error = err_message
             print(err_message)
