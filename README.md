@@ -26,6 +26,7 @@ IDE - PyCharm Community Edition
 -> pip install emoji
 -> pip install xmltodict
 -> pip install CurrencyConverter
+-> pip install requests
 
 Розгортання у Docker
 -> Запустити .\Docker\telegrambot_docker.bat

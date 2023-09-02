@@ -12,6 +12,7 @@ RUN pip install pyTelegramBotAPI
 RUN pip install emoji
 RUN pip install xmltodict
 RUN pip install CurrencyConverter
+RUN pip install requests
 
 # run app
 CMD ["python", "main.py"]
