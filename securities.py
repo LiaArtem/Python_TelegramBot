@@ -2,6 +2,7 @@ import csv
 import json
 import sqlite3
 import urllib.request
+import urllib.error
 from datetime import date
 
 
@@ -115,21 +116,24 @@ class Read_ISIN_Securities:
             rows = cursor.fetchone()
             # если нет данных загрузить их и обновить
             if rows[0] == 0:
-                url = "https://bank.gov.ua/files/Fair_value/" + date.today().strftime(
-                    "%Y%m") + "/" + date.today().strftime("%Y%m%d") + "_fv.txt"
-                response = urllib.request.urlopen(url)
-                lines = [line.decode('cp1251') for line in response.readlines()]
-                cr = csv.reader(lines)
-                for row in cr:
-                    split_data = row[0].split(";")
-                    if split_data[1] == "cpcode":
-                        continue
-                    params = (date.today().strftime("%Y-%m-%d"),
-                              float(split_data[3]),
-                              split_data[1])
-                    cursor.execute(
-                        'UPDATE SECUR_ISIN SET FAIR_DATE = ?, FAIR_VALUE = ? WHERE ISIN = ?', params)
-
+                try:
+                    url = "https://bank.gov.ua/files/Fair_value/" + date.today().strftime(
+                            "%Y%m") + "/" + date.today().strftime("%Y%m%d") + "_fv.txt"
+                    response = urllib.request.urlopen(url)
+                    lines = [line.decode('cp1251') for line in response.readlines()]
+                    cr = csv.reader(lines)
+                    for row in cr:
+                        split_data = row[0].split(";")
+                        if split_data[1] == "cpcode":
+                            continue
+                        params = (date.today().strftime("%Y-%m-%d"),
+                                  float(split_data[3]),
+                                  split_data[1])
+                        cursor.execute(
+                            'UPDATE SECUR_ISIN SET FAIR_DATE = ?, FAIR_VALUE = ? WHERE ISIN = ?', params)
+                except urllib.error.HTTPError as e:
+                    if e.code != 404:
+                        raise
             # Получить данные
             if securities_isin == "":
                 securities_name = get_name_securities_type(securities_type)
@@ -145,9 +149,13 @@ class Read_ISIN_Securities:
                 rows = cursor.fetchall()
             buff = ""
             for row_count, row in enumerate(rows):
+                if row[8] == date.today().strftime("%Y-%m-%d"):
+                    date_arc = ""
+                else:
+                    date_arc = " за " + row[8]
                 buff = buff + ("ISIN: " + str(row[1]) + "\n"
                                + "Номінал: " + str(row[2]) + "\n"
-                               + "Вартість: " + str(row[9]) + "\n"
+                               + "Вартість: " + str(row[9]) + date_arc + "\n"
                                + "Валюта: " + str(row[6]) + "\n"
                                + "% ставка: " + str(row[3]) + "\n"
                                + "Дата виплати: " + str(row[4]) + "\n"

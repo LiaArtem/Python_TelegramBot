@@ -44,42 +44,10 @@ def start(message):
 
 
 #########################################################################
-# commands=['curs']
+# commands
 #########################################################################
-@bot.message_handler(commands=['curs'])
-def curs(message):
-    on_click_start(message)
-
-
-#########################################################################
-# commands=['convert_curs']
-#########################################################################
-@bot.message_handler(commands=['convert_curs'])
-def convert_curs(message):
-    on_click_start(message)
-
-
-#########################################################################
-# commands=['weather']
-#########################################################################
-@bot.message_handler(commands=['weather'])
-def convert_curs(message):
-    on_click_start(message)
-
-
-#########################################################################
-# commands=['erb']
-#########################################################################
-@bot.message_handler(commands=['erb'])
-def erb(message):
-    on_click_start(message)
-
-
-#########################################################################
-# commands=['securities']
-#########################################################################
-@bot.message_handler(commands=['securities'])
-def securities(message):
+@bot.message_handler(commands=['curs', 'convert_curs', 'weather', 'erb', 'securities'])
+def comm(message):
     on_click_start(message)
 
 
@@ -584,23 +552,7 @@ def on_click_securities(message):
 
     elif message.text == 'Довгострокові звичайні':
         global_securities_type = '1'
-        p = Read_ISIN_Securities(global_securities_type, "UAH", "", False)
-        if p.text_error == "":
-            if p.text_result == "":
-                m_message = 'Цінні папери ISIN у UAH (Довгострокові звичайні) не знайдені.'
-                on_securities_menu(message, m_message)
-                bot.register_next_step_handler(message, on_click_securities)
-            else:
-                m_message = p.text_result
-                if len(m_message) > 4095:
-                    for x in range(0, len(m_message), 4095):
-                        on_securities_menu(message, m_message[x:x + 4095])
-                else:
-                    on_securities_menu(message, m_message)
-                bot.register_next_step_handler(message, on_click_securities)  # следующий шаг обработки
-        else:
-            bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
-            on_click_global(message)
+        securities_type(message)
 
     elif message.text == 'Середньострокові':
         global_securities_type = '4'
@@ -608,23 +560,7 @@ def on_click_securities(message):
 
     elif message.text == 'Довгострокові з індексованою вартістю':
         global_securities_type = '2'
-        p = Read_ISIN_Securities(global_securities_type, "UAH", "", False)
-        if p.text_error == "":
-            if p.text_result == "":
-                m_message = 'Цінні папери ISIN у UAH (Довгострокові з індексованою вартістю) не знайдені.'
-                on_securities_menu(message, m_message)
-                bot.register_next_step_handler(message, on_click_securities)
-            else:
-                m_message = p.text_result
-                if len(m_message) > 4095:
-                    for x in range(0, len(m_message), 4095):
-                        on_securities_menu(message, m_message[x:x + 4095])
-                else:
-                    on_securities_menu(message, m_message)
-                bot.register_next_step_handler(message, on_click_securities)  # следующий шаг обработки
-        else:
-            bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
-            on_click_global(message)
+        securities_type(message)
 
     elif message.text == 'Короткострокові дисконтні':
         global_securities_type = '5'
@@ -632,23 +568,8 @@ def on_click_securities(message):
 
     elif message.text == 'Довгострокові інфляційні':
         global_securities_type = '3'
-        p = Read_ISIN_Securities(global_securities_type, "UAH", "", False)
-        if p.text_error == "":
-            if p.text_result == "":
-                m_message = 'Цінні папери ISIN у UAH (Довгострокові інфляційні) не знайдені.'
-                on_securities_menu(message, m_message)
-                bot.register_next_step_handler(message, on_click_securities)
-            else:
-                m_message = p.text_result
-                if len(m_message) > 4095:
-                    for x in range(0, len(m_message), 4095):
-                        on_securities_menu(message, m_message[x:x + 4095])
-                else:
-                    on_securities_menu(message, m_message)
-                bot.register_next_step_handler(message, on_click_securities)  # следующий шаг обработки
-        else:
-            bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
-            on_click_global(message)
+        securities_type(message)
+
     elif message.text == 'OЗДП':
         global_securities_type = '6'
         on_securities_curr_menu(message)
@@ -656,6 +577,29 @@ def on_click_securities(message):
     elif message.text == 'Пошук по ISIN':
         bot.send_message(message.chat.id, 'Введіть ISIN')
         bot.register_next_step_handler(message, click_securities_others)  # следующий шаг обработки
+
+
+#########################################################################
+# securities
+#########################################################################
+def securities_type(message):
+    p = Read_ISIN_Securities(global_securities_type, "UAH", "", False)
+    if p.text_error == "":
+        if p.text_result == "":
+            m_message = 'Цінні папери ISIN у UAH (' + message.text + ') не знайдені.'
+            on_securities_menu(message, m_message)
+            bot.register_next_step_handler(message, on_click_securities)
+        else:
+            m_message = p.text_result
+            if len(m_message) > 4095:
+                for x in range(0, len(m_message), 4095):
+                    on_securities_menu(message, m_message[x:x + 4095])
+            else:
+                on_securities_menu(message, m_message)
+            bot.register_next_step_handler(message, on_click_securities)  # следующий шаг обработки
+    else:
+        bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+        on_click_global(message)
 
 
 #########################################################################
