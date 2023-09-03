@@ -26,7 +26,7 @@ global_convert_code_from = ''
 global_convert_code_to = ''
 global_securities_type = ''
 
-g_InlineKeyboard = False
+g_InlineKeyboard = True
 
 
 #########################################################################
@@ -519,15 +519,21 @@ def on_securities_curr_menu_reply(message):
 # view securities curr menu - InlineKeyboardMarkup
 #########################################################################
 def on_securities_curr_menu_inline(message):
-    markup = types.InlineKeyboardMarkup()
-    btn1 = types.InlineKeyboardButton('UAH', callback_data='securities_uah')
-    btn2 = types.InlineKeyboardButton('USD', callback_data='securities_usd')
-    btn3 = types.InlineKeyboardButton('EUR', callback_data='securities_eur')
-
     if global_securities_type == '6':
-        markup.row(btn2, btn3)
+        markup = types.InlineKeyboardMarkup(keyboard=[
+            [
+                types.InlineKeyboardButton(text='USD', callback_data='securities_usd'),
+                types.InlineKeyboardButton(text='EUR', callback_data='securities_eur'),
+            ]
+        ], row_width=2)
     else:
-        markup.row(btn1, btn2, btn3)
+        markup = types.InlineKeyboardMarkup(keyboard=[
+            [
+                types.InlineKeyboardButton(text='UAH', callback_data='securities_uah'),
+                types.InlineKeyboardButton(text='USD', callback_data='securities_usd'),
+                types.InlineKeyboardButton(text='EUR', callback_data='securities_eur'),
+            ]
+        ], row_width=3)
     bot.send_message(message.chat.id, f'{emoji.emojize(":heavy_dollar_sign:")} Виберіть валюту ЦП', parse_mode='html',
                      reply_markup=markup)
 
@@ -539,7 +545,7 @@ def callback_message(callback):
         if p.text_error == "":
             if p.text_result == "":
                 m_message = ('Цінні папери у ' + callback.data.upper()[-3:] + ' (' +
-                             get_name_securities_type(global_securities_type) + ') не знайдені.')
+                             get_name_securities_type(global_securities_type).replace("%", "") + ') не знайдені.')
                 on_securities_menu(callback.message, m_message)
                 bot.register_next_step_handler(callback.message, on_click_securities)
             else:
@@ -637,7 +643,7 @@ def on_click_securities_type(message):
         bot.register_next_step_handler(message, on_click_securities)
     elif message.text in ('ЦП UAH', 'ЦП USD', 'ЦП EUR'):
         curr_code = message.text.upper()[-3:]
-        message.text = get_name_securities_type(global_securities_type)
+        message.text = get_name_securities_type(global_securities_type).replace("%", "")
         securities_type(message, curr_code)
     else:
         on_securities_menu(message, f'{emoji.emojize(":left_arrow:")} Назад до вибору типу ЦП')

@@ -104,8 +104,8 @@ class Read_curs:
                                   1)
                         cursor.execute("INSERT OR IGNORE INTO CURRENCY(curr_code, curr_name) VALUES(?, ?)",
                                        (json_line[self.char_curr_code], json_line[self.char_curr_name]))
-                        cursor.execute("INSERT OR IGNORE INTO CURS(curs_date, curr_code, rate, forc) VALUES(?, ?, ?, ?)",
-                                       params)
+                        cursor.execute("INSERT OR IGNORE INTO CURS(curs_date, curr_code, rate, forc) "
+                                       "VALUES(?, ?, ?, ?)", params)
 
                     # read new curs
                     params = (date_cred.strftime("%Y-%m-%d"), curr_code)
