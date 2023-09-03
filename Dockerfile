@@ -5,6 +5,7 @@ WORKDIR /usr/src/app/
 
 RUN mkdir -p /usr/src/app/service/
 RUN mkdir -p /usr/src/app/database/
+RUN mkdir -p /usr/src/app/log/
 # copy project
 COPY ./*.py /usr/src/app/
 COPY ./service/*.py /usr/src/app/service/

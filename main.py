@@ -1,5 +1,6 @@
 import time
 import telebot
+import logging
 from telebot import types
 import emoji  # https://carpedm20.github.io/emoji/
 from datetime import date
@@ -20,6 +21,10 @@ bot.set_my_commands([
     telebot.types.BotCommand("/erb", "Виконавчі провадження"),
     telebot.types.BotCommand("/securities", "Цінні папери")
 ])
+logger = telebot.logger
+logging.basicConfig(filename='./log/filename.log', level=logging.DEBUG,
+                    format="%(asctime)s - [%(levelname)s] - %(name)s - "
+                           "(%(filename)s).%(funcName)s(%(lineno)d) - %(message)s")
 
 # global variables
 global_convert_code_from = ''
