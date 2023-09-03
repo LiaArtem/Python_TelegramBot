@@ -26,6 +26,8 @@ global_convert_code_from = ''
 global_convert_code_to = ''
 global_securities_type = ''
 
+g_InlineKeyboard = False
+
 
 #########################################################################
 # commands=['start']
@@ -494,9 +496,29 @@ def on_securities_menu(message, message_text):
 
 
 #########################################################################
+# view securities curr menu
+#########################################################################
+def on_securities_curr_menu_reply(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+    btn1 = types.KeyboardButton('ЦП UAH')
+    btn2 = types.KeyboardButton('ЦП USD')
+    btn3 = types.KeyboardButton('ЦП EUR')
+
+    if global_securities_type == '6':
+        markup.row(btn2, btn3)
+    else:
+        markup.row(btn1, btn2, btn3)
+    btn1 = types.KeyboardButton(f'{emoji.emojize(":left_arrow:")} Назад до вибору типу ЦП')
+    markup.row(btn1)
+    bot.send_message(message.chat.id, f'{emoji.emojize(":heavy_dollar_sign:")} Виберіть валюту ЦП', parse_mode='html',
+                     reply_markup=markup)
+    bot.register_next_step_handler(message, on_click_securities_type)  # следующий шаг обработки
+
+
+#########################################################################
 # view securities curr menu - InlineKeyboardMarkup
 #########################################################################
-def on_securities_curr_menu(message):
+def on_securities_curr_menu_inline(message):
     markup = types.InlineKeyboardMarkup()
     btn1 = types.InlineKeyboardButton('UAH', callback_data='securities_uah')
     btn2 = types.InlineKeyboardButton('USD', callback_data='securities_usd')
@@ -547,27 +569,36 @@ def on_click_securities(message):
 
     elif message.text == 'Довгострокові звичайні':
         global_securities_type = '1'
-        securities_type(message)
+        securities_type(message, 'UAH')
 
     elif message.text == 'Середньострокові':
         global_securities_type = '4'
-        on_securities_curr_menu(message)
+        if g_InlineKeyboard:
+            on_securities_curr_menu_inline(message)
+        else:
+            on_securities_curr_menu_reply(message)
 
     elif message.text == 'Довгострокові з індексованою вартістю':
         global_securities_type = '2'
-        securities_type(message)
+        securities_type(message, 'UAH')
 
     elif message.text == 'Короткострокові дисконтні':
         global_securities_type = '5'
-        on_securities_curr_menu(message)
+        if g_InlineKeyboard:
+            on_securities_curr_menu_inline(message)
+        else:
+            on_securities_curr_menu_reply(message)
 
     elif message.text == 'Довгострокові інфляційні':
         global_securities_type = '3'
-        securities_type(message)
+        securities_type(message, 'UAH')
 
     elif message.text == 'OЗДП':
         global_securities_type = '6'
-        on_securities_curr_menu(message)
+        if g_InlineKeyboard:
+            on_securities_curr_menu_inline(message)
+        else:
+            on_securities_curr_menu_reply(message)
 
     elif message.text == 'Пошук по ISIN':
         bot.send_message(message.chat.id, 'Введіть ISIN')
@@ -577,11 +608,11 @@ def on_click_securities(message):
 #########################################################################
 # securities
 #########################################################################
-def securities_type(message):
-    p = Read_ISIN_Securities(global_securities_type, "UAH", "", False)
+def securities_type(message, curr_code):
+    p = Read_ISIN_Securities(global_securities_type, curr_code, "", False)
     if p.text_error == "":
         if p.text_result == "":
-            m_message = 'Цінні папери ISIN у UAH (' + message.text + ') не знайдені.'
+            m_message = 'Цінні папери ISIN у ' + curr_code + ' (' + message.text + ') не знайдені.'
             on_securities_menu(message, m_message)
             bot.register_next_step_handler(message, on_click_securities)
         else:
@@ -595,6 +626,22 @@ def securities_type(message):
     else:
         bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
         on_click_global(message)
+
+
+#########################################################################
+# securities
+#########################################################################
+def on_click_securities_type(message):
+    if message.text.endswith('Назад до вибору типу ЦП'):
+        on_securities_menu(message, f'{emoji.emojize(":left_arrow:")} Назад до вибору типу ЦП')
+        bot.register_next_step_handler(message, on_click_securities)
+    elif message.text in ('ЦП UAH', 'ЦП USD', 'ЦП EUR'):
+        curr_code = message.text.upper()[-3:]
+        message.text = get_name_securities_type(global_securities_type)
+        securities_type(message, curr_code)
+    else:
+        on_securities_menu(message, f'{emoji.emojize(":left_arrow:")} Назад до вибору типу ЦП')
+        bot.register_next_step_handler(message, on_click_securities)
 
 
 #########################################################################
