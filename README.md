@@ -1,5 +1,5 @@
 # Python_TelegramBot
-Python Telegram Bot using lib Telebot, Docker (exchange rates, exchange rate conversion, weather, unified register of debtors, securities)
+Python Telegram Bot using lib Telebot, SQLite, Docker (exchange rates, exchange rate conversion, weather, unified register of debtors, securities)
 
 IDE - PyCharm Community Edition
 
