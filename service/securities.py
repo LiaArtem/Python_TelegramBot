@@ -150,10 +150,13 @@ class Read_ISIN_Securities:
                 rows = cursor.fetchall()
             buff = ""
             for row_count, row in enumerate(rows):
-                if row[8] is None or row[9] is None or row[8] == date.today().strftime("%Y-%m-%d"):
-                    fair_value = ""
+                if row[9] is None:
+                    fair_value = "--"
                 else:
-                    fair_value = str(row[9]) + " за " + str(row[8])
+                    if row[8] is None or row[8] == date.today().strftime("%Y-%m-%d"):
+                        fair_value = str(row[9])
+                    else:
+                        fair_value = str(row[9]) + " за " + str(row[8])
                 buff = buff + ("ISIN: " + str(row[1]) + "\n"
                                + "Номінал: " + str(row[2]) + "\n"
                                + "Вартість: " + fair_value + "\n"
