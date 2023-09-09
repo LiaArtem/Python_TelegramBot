@@ -13,7 +13,8 @@ class Read_erb:
                 if cust_params[4] is not None:
                     # преобразование 01.02.2001 -> 2001-02-01T00:00:00.000Z
                     data = str(cust_params[4])
-                    data = data[6:10] + "-" + data[3:5] + "-" + data[0:2] + "T00:00:00.000Z"
+                    data = (data[6:10] + "-" + data[3:5] + "-" + data[0:2] +
+                            "T00:00:00.000Z")
                 else:
                     data = None
                 m_json = {"filter": {"IdentCode": cust_params[0],
@@ -29,7 +30,8 @@ class Read_erb:
                                      "categoryCode": ""},
                           "paging": "1", "searchType": "2"}
             else:
-                self.text_error = 'Ошибка = тип контрагента не верный = ' + str(cust_type)
+                self.text_error = ('Ошибка = тип контрагента не верный = ' +
+                                   str(cust_type))
                 return
 
             response = requests.post(url, json=m_json)
@@ -38,7 +40,8 @@ class Read_erb:
                 if m_json['isSuccess']:
                     m_buff = ""
                     self.count_result = m_json['rows']
-                    m_buff_start = ("Знайдено: " + str(m_json['rows']) + ' виконавчих проваджень, опис перших 5-ти:'
+                    m_buff_start = ("Знайдено: " + str(m_json['rows']) +
+                                    ' виконавчих проваджень, опис перших 5-ти:'
                                     + "\n" + "\n")
                     for cc_num, cc in enumerate(m_json["results"]):
                         if cc_num >= 5:
@@ -48,8 +51,10 @@ class Read_erb:
                             # преобразование 2001-02-01T00:00:00.000Z -> 01.02.2001
                             data = str(cc['birthDate'])
                             data = data[8:10] + "." + data[5:7] + "." + data[0:4]
-                            m_buff = ("ПІБ: " + (str(cc['lastName']) + " " + str(cc['firstName']) + " " + str(
-                                cc['middleName'])).strip() + "\n"
+                            m_buff = ("ПІБ: " +
+                                      (str(cc['lastName']) + " " +
+                                       str(cc['firstName']) + " " + str(
+                                                  cc['middleName'])).strip() + "\n"
                                       + 'Дата нар.: ' + data + "\n"
                                       + 'Опис: ' + str(cc['deductionType']) + "\n"
                                       + 'Тип: ' + str(cc['publisher']) + "\n"

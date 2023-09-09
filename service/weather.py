@@ -15,19 +15,23 @@ class Read_weather:
             response = requests.get(url)
             data = json.loads(response.text)
             if str(data['cod']) == "200":
-                self.text_result = ("Місто - " + str(city_name) + " (знайдене - " + str(data['name']) +
-                                    "(" + str(get_name_country(data['sys']['country'])) + "))\n" +
-                                    "Температура: " + str(data['main']['temp']) +
-                                    " °C (min: " + str(data['main']['temp_min']) +
-                                    " °C, max: " + str(data['main']['temp_max']) + " °C)\n" +
-                                    "Швидкість вітру: " + str(data['wind']['speed']) + " m/c\n" +
-                                    "Вологість: " + str(data['main']['humidity']) + " %"
-                                    )
+                self.text_result = (
+                        "Місто - " + str(city_name) + " (знайдене - " +
+                        str(data['name']) +
+                        "(" + str(get_name_country(data['sys']['country'])) + "))\n" +
+                        "Температура: " + str(data['main']['temp']) +
+                        " °C (min: " + str(data['main']['temp_min']) +
+                        " °C, max: " + str(data['main']['temp_max']) + " °C)\n" +
+                        "Швидкість вітру: " + str(data['wind']['speed']) + " m/c\n" +
+                        "Вологість: " + str(data['main']['humidity']) + " %"
+                )
             elif str(data['cod']) == "404":
                 self.city_not_found = True
-                self.text_error = 'Ошибка = ' + str(data['cod']) + ' ' + str(data['message'])
+                self.text_error = ('Ошибка = ' + str(data['cod']) + ' '
+                                   + str(data['message']))
             else:
-                self.text_error = 'Ошибка = ' + str(data['cod']) + ' ' + str(data['message'])
+                self.text_error = ('Ошибка = ' + str(data['cod']) + ' '
+                                   + str(data['message']))
 
         except Exception as err_curs:
             self.text_error = err_curs

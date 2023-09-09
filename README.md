@@ -3,6 +3,10 @@ Python Telegram Bot using lib Telebot, SQLite, Docker (exchange rates, exchange 
 
 IDE - PyCharm Community Edition
 
+- Перевірка якості кода ruff check
+-> pip install ruff
+-> ruff check .
+
 Налаштування:
  - Відкрийте Telegram
  - Знайдіть @BotFather і почніть розмову.

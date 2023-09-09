@@ -39,10 +39,13 @@ g_InlineKeyboard = True
 #########################################################################
 @bot.message_handler(commands=['start'])
 def start(message):
-    message_text = (f'Привіт {emoji.emojize(":grinning_face:")} <b>{message.from_user.first_name} '
-                    f'{message.from_user.last_name}</b> обери пункт з головного меню.')
+    message_text = (f'Привіт {emoji.emojize(":grinning_face:")}'
+                    f' <b>{message.from_user.first_name} '
+                    f'{message.from_user.last_name}'
+                    f'</b> обери пункт з головного меню.')
     on_global_menu(message, message_text)
-    bot.register_next_step_handler(message, on_click_start)  # следующий шаг обработка гравного меню
+    # следующий шаг обработки
+    bot.register_next_step_handler(message, on_click_start)
 
 
 #########################################################################
@@ -58,15 +61,21 @@ def comm(message):
 #########################################################################
 def on_global_menu(message, message_text):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
-    btn1 = types.KeyboardButton(f'{emoji.emojize(":money_bag:")} Курси валют')
-    btn2 = types.KeyboardButton(f'{emoji.emojize(":currency_exchange:")} Конвертер валют')
+    btn1 = types.KeyboardButton(f'{emoji.emojize(":money_bag:")}'
+                                f' Курси валют')
+    btn2 = types.KeyboardButton(f'{emoji.emojize(":currency_exchange:")}'
+                                f' Конвертер валют')
     markup.add(btn1, btn2)
-    btn1 = types.KeyboardButton(f'{emoji.emojize(":rolled-up_newspaper:")} Цінні папери')
-    btn2 = types.KeyboardButton(f'{emoji.emojize(":check_box_with_check:")} Виконавчі провадження')
+    btn1 = types.KeyboardButton(f'{emoji.emojize(":rolled-up_newspaper:")}'
+                                f' Цінні папери')
+    btn2 = types.KeyboardButton(f'{emoji.emojize(":check_box_with_check:")}'
+                                f' Виконавчі провадження')
     markup.add(btn1, btn2)
-    btn1 = types.KeyboardButton(f'{emoji.emojize(":sun_behind_small_cloud:")} Погода')
+    btn1 = types.KeyboardButton(f'{emoji.emojize(":sun_behind_small_cloud:")}'
+                                f' Погода')
     markup.add(btn1)
-    bot.send_message(message.chat.id, message_text, parse_mode='html', reply_markup=markup)
+    bot.send_message(message.chat.id, message_text,
+                     parse_mode='html', reply_markup=markup)
 
 
 #########################################################################
@@ -87,31 +96,45 @@ def on_click_start(message):
 
     if message.text.endswith('Курси валют') or message.text.lower() == "/curs":
         # выводим новое меню
-        on_curs_menu(message, f'{emoji.emojize(":heavy_dollar_sign:")} Оберіть валюту')
-        bot.register_next_step_handler(message, on_click_curs)  # следующий шаг обработки
+        on_curs_menu(message, f'{emoji.emojize(":heavy_dollar_sign:")}'
+                              f' Оберіть валюту')
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, on_click_curs)
 
-    elif message.text.endswith('Конвертер валют') or message.text.lower() == "/convert_curs":
+    elif (message.text.endswith('Конвертер валют')
+          or message.text.lower() == "/convert_curs"):
         # выводим новое меню
-        on_convert_curs_menu(message, f'{emoji.emojize(":heavy_dollar_sign:")} Оберіть валюти')
-        bot.register_next_step_handler(message, on_click_convert_curs)  # следующий шаг обработки
+        on_convert_curs_menu(message, f'{emoji.emojize(":heavy_dollar_sign:")}'
+                                      f' Оберіть валюти')
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, on_click_convert_curs)
 
-    elif message.text.endswith('Погода') or message.text.lower() == "/weather":
+    elif (message.text.endswith('Погода')
+          or message.text.lower() == "/weather"):
         # выводим новое меню
-        on_weather_menu(message, f'{emoji.emojize(":cityscape:")} Оберіть місто')
-        bot.register_next_step_handler(message, on_click_weather)  # следующий шаг обработки
+        on_weather_menu(message, f'{emoji.emojize(":cityscape:")}'
+                                 f' Оберіть місто')
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, on_click_weather)
 
-    elif message.text.endswith('Виконавчі провадження') or message.text.lower() == "/erb":
+    elif (message.text.endswith('Виконавчі провадження')
+          or message.text.lower() == "/erb"):
         # выводим новое меню
-        on_erb_menu(message, f'{emoji.emojize(":magnifying_glass_tilted_right:")} Пошук...')
+        on_erb_menu(message,
+                    f'{emoji.emojize(":magnifying_glass_tilted_right:")}'
+                    f' Пошук...')
         bot.register_next_step_handler(message, on_click_erb)  # следующий шаг обработки
 
     elif message.text.endswith('Цінні папери') or message.text.lower() == "/securities":
         # выводим новое меню
-        on_securities_menu(message, f'{emoji.emojize(":magnifying_glass_tilted_right:")} Пошук...')
-        bot.register_next_step_handler(message, on_click_securities)  # следующий шаг обработки
-
+        on_securities_menu(message,
+                           f'{emoji.emojize(":magnifying_glass_tilted_right:")}'
+                           f' Пошук...')
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, on_click_securities)
     else:
-        bot.register_next_step_handler(message, on_click_start)  # следующий шаг обработки
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, on_click_start)
 
 
 #########################################################################
@@ -128,7 +151,8 @@ def on_curs_menu(message, message_text):
     btn1 = types.KeyboardButton('Інша валюта')
     btn2 = types.KeyboardButton(f'{emoji.emojize(":house:")} Головне Меню')
     markup.row(btn1, btn2)
-    bot.send_message(message.chat.id, message_text, parse_mode='html', reply_markup=markup)
+    bot.send_message(message.chat.id, message_text,
+                     parse_mode='html', reply_markup=markup)
 
 
 #########################################################################
@@ -138,16 +162,20 @@ def on_click_curs(message):
     if message.text.endswith('Головне Меню'):
         # Возврат в главное меню
         on_click_global(message)
-    elif message.text in ('USD - Долар США', 'EUR - ЄВРО', 'GBP - Фунт стерлінгів', 'PLN - Польский злотий'):
+    elif message.text in ('USD - Долар США', 'EUR - ЄВРО',
+                          'GBP - Фунт стерлінгів', 'PLN - Польский злотий'):
         p = Read_curs(date.today(), message.text.upper()[0:3])
         if p.is_request_curs:
-            bot.send_message(message.chat.id, 'Курс ' + message.text.upper()[0:3] + ' не найден')
+            bot.send_message(message.chat.id,
+                             'Курс ' + message.text.upper()[0:3] + ' не найден')
         else:
-            m_message = ('Курс ' + message.text.upper()[0:3] + ' (' + p.curr_name + ')' +
+            m_message = ('Курс ' + message.text.upper()[0:3] +
+                         ' (' + p.curr_name + ')' +
                          " = {:.2f}".format(p.curs_amount) + ' грн.')
             # вызов меню курсов для повторного выбора
             on_curs_menu(message, m_message)
-            bot.register_next_step_handler(message, on_click_curs)  # следующий шаг обработка курсов
+            # следующий шаг обработка курсов
+            bot.register_next_step_handler(message, on_click_curs)
 
     elif message.text == 'Інша валюта':
         bot.send_message(message.chat.id, 'Введіть літерний код курсу валют')
@@ -170,7 +198,8 @@ def click_curs_others(message):
                      " = {:.2f}".format(p.curs_amount) + ' грн.')
         # вызов меню курсов для повторного выбора
         on_curs_menu(message, m_message)
-        bot.register_next_step_handler(message, on_click_curs)  # следующий шаг обработка курсов
+        # следующий шаг обработка курсов
+        bot.register_next_step_handler(message, on_click_curs)
 
 
 #########################################################################
@@ -193,7 +222,8 @@ def on_convert_curs_menu(message, message_text):
     btn1 = types.KeyboardButton('Інші валюти')
     btn2 = types.KeyboardButton(f'{emoji.emojize(":house:")} Головне Меню')
     markup.row(btn1, btn2)
-    bot.send_message(message.chat.id, message_text, parse_mode='html', reply_markup=markup)
+    bot.send_message(message.chat.id, message_text,
+                     parse_mode='html', reply_markup=markup)
 
 
 #########################################################################
@@ -214,7 +244,8 @@ def on_click_convert_curs(message):
         bot.register_next_step_handler(message, click_convert_curs_amount)
 
     elif message.text == 'Інші валюти':
-        bot.send_message(message.chat.id, 'Введіть коди валют для конвертації (наприклад USD/EUR)')
+        bot.send_message(message.chat.id,
+                         'Введіть коди валют для конвертації (наприклад USD/EUR)')
         bot.register_next_step_handler(message, click_convert_curs_others)
 
 
@@ -232,15 +263,18 @@ def click_convert_curs_amount(message):
     if amount > 0:
         cc = Read_convert_curs(amount, global_convert_code_from, global_convert_code_to)
         if cc.text_error != "":
-            m_message = 'Конвертація пройшла з помилкою, можливо введені неправильні коди валют'
+            m_message = ('Конвертація пройшла з помилкою,'
+                         ' можливо введені неправильні коди валют')
             on_convert_curs_menu(message, m_message)
-            bot.register_next_step_handler(message, on_click_convert_curs)  # следующий шаг обработки
+            # следующий шаг обработки
+            bot.register_next_step_handler(message, on_click_convert_curs)
             return
 
         m_message = ("{:.2f}".format(amount) + ' ' + global_convert_code_from + ' = '
                      + "{:.2f}".format(cc.curs_amount) + ' ' + global_convert_code_to)
         on_convert_curs_menu(message, m_message)
-        bot.register_next_step_handler(message, on_click_convert_curs)  # следующий шаг обработки
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, on_click_convert_curs)
     else:
         bot.send_message(message.chat.id, 'Введіть суму > 0.')
         bot.register_next_step_handler(message, click_convert_curs_amount)
@@ -262,7 +296,9 @@ def click_convert_curs_others(message):
         bot.send_message(message.chat.id, 'Введіть сумму')
         bot.register_next_step_handler(message, click_convert_curs_amount)
     except Exception as err_message:
-        bot.send_message(message.chat.id, 'Введені некорректні коди валют для конвертації (наприклад USD/EUR)')
+        bot.send_message(message.chat.id,
+                         'Введені некорректні коди валют'
+                         ' для конвертації (наприклад USD/EUR)')
         bot.register_next_step_handler(message, click_convert_curs_others)
         print(err_message)
 
@@ -281,7 +317,8 @@ def on_weather_menu(message, message_text):
     btn1 = types.KeyboardButton('Інше місто')
     btn2 = types.KeyboardButton(f'{emoji.emojize(":house:")} Головне Меню')
     markup.row(btn1, btn2)
-    bot.send_message(message.chat.id, message_text, parse_mode='html', reply_markup=markup)
+    bot.send_message(message.chat.id, message_text,
+                     parse_mode='html', reply_markup=markup)
 
 
 #########################################################################
@@ -296,13 +333,15 @@ def on_click_weather(message):
         if p.city_not_found:
             bot.send_message(message.chat.id, 'Місто ' + message.text + ' не знайдене')
         elif not p.city_not_found and p.text_error != "":
-            bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+            bot.send_message(message.chat.id,
+                             'Сервіс тимчасово не працює. Спробуйте пізніше.')
             on_click_global(message)
         else:
             m_message = p.text_result
             # вызов меню погоды для повторного выбора
             on_weather_menu(message, m_message)
-            bot.register_next_step_handler(message, on_click_weather)  # следующий шаг обработки
+            # следующий шаг обработки
+            bot.register_next_step_handler(message, on_click_weather)
 
     elif message.text == 'Інше місто':
         bot.send_message(message.chat.id, 'Введіть назву міста')
@@ -319,13 +358,15 @@ def click_weather_others(message):
         bot.send_message(message.chat.id, 'Введіть нову назву міста (укр., eng. ...)')
         bot.register_next_step_handler(message, click_weather_others)
     elif not p.city_not_found and p.text_error != "":
-        bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+        bot.send_message(message.chat.id,
+                         'Сервіс тимчасово не працює. Спробуйте пізніше.')
         on_click_global(message)
     else:
         m_message = p.text_result
         # вызов меню погоды для повторного выбора
         on_weather_menu(message, m_message)
-        bot.register_next_step_handler(message, on_click_weather)  # следующий шаг обработки
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, on_click_weather)
 
 
 #########################################################################
@@ -341,7 +382,8 @@ def on_erb_menu(message, message_text):
     markup.row(btn1, btn2)
     btn1 = types.KeyboardButton(f'{emoji.emojize(":house:")} Головне Меню')
     markup.row(btn1)
-    bot.send_message(message.chat.id, message_text, parse_mode='html', reply_markup=markup)
+    bot.send_message(message.chat.id, message_text,
+                     parse_mode='html', reply_markup=markup)
 
 
 #########################################################################
@@ -355,10 +397,11 @@ def on_click_erb(message):
         bot.send_message(message.chat.id, 'Введіть код фіз. особи')
         bot.register_next_step_handler(message, click_erb_fiz_code)
     elif message.text == 'Фіз. особа - ПІБ':
-        bot.send_message(message.chat.id, 'Введіть дані фіз. особи через кому, наприклад \n'
-                                          'Миколайчук,Миколай,Миколайович,01.01.1982 \n'
-                                          'Миколайчук,Миколай,Миколайович \n'
-                                          'Миколайчук,Миколай \n')
+        bot.send_message(message.chat.id,
+                         'Введіть дані фіз. особи через кому, наприклад \n'
+                         'Миколайчук,Миколай,Миколайович,01.01.1982 \n'
+                         'Миколайчук,Миколай,Миколайович \n'
+                         'Миколайчук,Миколай \n')
         bot.register_next_step_handler(message, click_erb_fiz_name)
     elif message.text == 'Юр. особа - код':
         bot.send_message(message.chat.id, 'Введіть код юр. особи')
@@ -374,22 +417,27 @@ def on_click_erb(message):
 def click_erb_fiz_code(message):
     if len(message.text) != 10:
         on_erb_menu(message, 'Код фіз. особи повинен = 10 символів')
-        bot.register_next_step_handler(message, click_erb_fiz_code)  # следующий шаг обработки
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, click_erb_fiz_code)
         return
     try:
         int(message.text.strip())
     except ValueError:
-        bot.send_message(message.chat.id, 'Код фіз. особи повинен мати тільки цифри.')
-        bot.register_next_step_handler(message, click_erb_fiz_code)  # следующий шаг обработки
+        bot.send_message(message.chat.id,
+                         'Код фіз. особи повинен мати тільки цифри.')
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, click_erb_fiz_code)
         return
 
     cust_param = (message.text.strip(), "", "", "", None)
     p = Read_erb('phys', cust_param)
     if p.count_result == 0 and p.text_error == '':
         on_erb_menu(message, 'Виконавчі провадження не знайдені')
-        bot.register_next_step_handler(message, on_click_erb)  # следующий шаг обработки
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, on_click_erb)
     elif p.text_error != "":
-        bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+        bot.send_message(message.chat.id,
+                         'Сервіс тимчасово не працює. Спробуйте пізніше.')
         on_click_global(message)
     else:
         m_message = p.text_result
@@ -411,12 +459,14 @@ def click_erb_fiz_name(message):
         if len(m) > 2:
             m_surname = m[2].strip()
     except Exception as err_mes:
-        bot.send_message(message.chat.id, 'Введені неправильні дані, прошу введіть повторно дані '
-                                          'фіз. особи через кому, наприклад \n'
-                                          'Миколайчук,Миколай,Миколайович,01.01.1982 \n'
-                                          'Миколайчук,Миколай,Миколайович \n'
-                                          'Миколайчук,Миколай \n')
-        bot.register_next_step_handler(message, click_erb_fiz_name)  # следующий шаг обработки
+        bot.send_message(message.chat.id,
+                         'Введені неправильні дані, прошу введіть повторно дані '
+                         'фіз. особи через кому, наприклад \n'
+                         'Миколайчук,Миколай,Миколайович,01.01.1982 \n'
+                         'Миколайчук,Миколай,Миколайович \n'
+                         'Миколайчук,Миколай \n')
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, click_erb_fiz_name)
         print(err_mes)
         return
     cust_param = ("", m[0].strip(), m[1].strip(), m_surname, m_date)
@@ -425,7 +475,8 @@ def click_erb_fiz_name(message):
         on_erb_menu(message, 'Виконавчі провадження не знайдені')
         bot.register_next_step_handler(message, on_click_erb)  # следующий шаг обработки
     elif p.text_error != "":
-        bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+        bot.send_message(message.chat.id,
+                         'Сервіс тимчасово не працює. Спробуйте пізніше.')
         on_click_global(message)
     else:
         m_message = p.text_result
@@ -439,13 +490,15 @@ def click_erb_fiz_name(message):
 def click_erb_jur_code(message):
     if len(message.text) != 8:
         on_erb_menu(message, 'Код юр. особи повинен = 8 символів')
-        bot.register_next_step_handler(message, click_erb_jur_code)  # следующий шаг обработки
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, click_erb_jur_code)
         return
     try:
         int(message.text.strip())
     except ValueError:
         bot.send_message(message.chat.id, 'Код юр. особи повинен мати тільки цифри.')
-        bot.register_next_step_handler(message, click_erb_jur_code)  # следующий шаг обработки
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, click_erb_jur_code)
         return
 
     cust_param = (message.text.strip(), "", "", "", None)
@@ -454,7 +507,8 @@ def click_erb_jur_code(message):
         on_erb_menu(message, 'Виконавчі провадження не знайдені')
         bot.register_next_step_handler(message, on_click_erb)  # следующий шаг обработки
     elif p.text_error != "":
-        bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+        bot.send_message(message.chat.id,
+                         'Сервіс тимчасово не працює. Спробуйте пізніше.')
         on_click_global(message)
     else:
         m_message = p.text_result
@@ -472,7 +526,8 @@ def click_erb_jur_name(message):
         on_erb_menu(message, 'Виконавчі провадження не знайдені')
         bot.register_next_step_handler(message, on_click_erb)  # следующий шаг обработки
     elif p.text_error != "":
-        bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+        bot.send_message(message.chat.id,
+                         'Сервіс тимчасово не працює. Спробуйте пізніше.')
         on_click_global(message)
     else:
         m_message = p.text_result
@@ -497,7 +552,8 @@ def on_securities_menu(message, message_text):
     btn1 = types.KeyboardButton('Пошук по ISIN')
     btn2 = types.KeyboardButton(f'{emoji.emojize(":house:")} Головне Меню')
     markup.row(btn1, btn2)
-    bot.send_message(message.chat.id, message_text, parse_mode='html', reply_markup=markup)
+    bot.send_message(message.chat.id, message_text,
+                     parse_mode='html', reply_markup=markup)
 
 
 #########################################################################
@@ -513,11 +569,14 @@ def on_securities_curr_menu_reply(message):
         markup.row(btn2, btn3)
     else:
         markup.row(btn1, btn2, btn3)
-    btn1 = types.KeyboardButton(f'{emoji.emojize(":left_arrow:")} Назад до вибору типу ЦП')
+    btn1 = types.KeyboardButton(f'{emoji.emojize(":left_arrow:")}'
+                                f' Назад до вибору типу ЦП')
     markup.row(btn1)
-    bot.send_message(message.chat.id, f'{emoji.emojize(":heavy_dollar_sign:")} Виберіть валюту ЦП', parse_mode='html',
+    bot.send_message(message.chat.id, f'{emoji.emojize(":heavy_dollar_sign:")}'
+                                      f' Виберіть валюту ЦП', parse_mode='html',
                      reply_markup=markup)
-    bot.register_next_step_handler(message, on_click_securities_type)  # следующий шаг обработки
+    # следующий шаг обработки
+    bot.register_next_step_handler(message, on_click_securities_type)
 
 
 #########################################################################
@@ -539,18 +598,23 @@ def on_securities_curr_menu_inline(message):
                 types.InlineKeyboardButton(text='EUR', callback_data='securities_eur'),
             ]
         ], row_width=3)
-    bot.send_message(message.chat.id, f'{emoji.emojize(":heavy_dollar_sign:")} Виберіть валюту ЦП', parse_mode='html',
+    bot.send_message(message.chat.id, f'{emoji.emojize(":heavy_dollar_sign:")}'
+                                      f' Виберіть валюту ЦП', parse_mode='html',
                      reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
     if callback.data in ('securities_uah', 'securities_usd', 'securities_eur'):
-        p = Read_ISIN_Securities(global_securities_type, callback.data.upper()[-3:], "", False)
+        p = Read_ISIN_Securities(global_securities_type,
+                                 callback.data.upper()[-3:],
+                                 "",
+                                 False)
         if p.text_error == "":
             if p.text_result == "":
                 m_message = ('Цінні папери у ' + callback.data.upper()[-3:] + ' (' +
-                             get_name_securities_type(global_securities_type).replace("%", "") + ') не знайдені.')
+                             get_name_securities_type(global_securities_type)
+                             .replace("%", "") + ') не знайдені.')
                 on_securities_menu(callback.message, m_message)
                 bot.register_next_step_handler(callback.message, on_click_securities)
             else:
@@ -560,12 +624,15 @@ def callback_message(callback):
                         on_securities_menu(callback.message, m_message[x:x + 4095])
                 else:
                     on_securities_menu(callback.message, m_message)
-                bot.register_next_step_handler(callback.message, on_click_securities)  # следующий шаг обработки
+                # следующий шаг обработки
+                bot.register_next_step_handler(callback.message, on_click_securities)
         else:
-            bot.send_message(callback.message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+            bot.send_message(callback.message.chat.id,
+                             'Сервіс тимчасово не працює. Спробуйте пізніше.')
             on_click_global(callback.message)
     else:
-        bot.register_next_step_handler(callback.message, on_click_securities)  # следующий шаг обработки
+        # следующий шаг обработки
+        bot.register_next_step_handler(callback.message, on_click_securities)
 
 
 #########################################################################
@@ -613,7 +680,8 @@ def on_click_securities(message):
 
     elif message.text == 'Пошук по ISIN':
         bot.send_message(message.chat.id, 'Введіть ISIN')
-        bot.register_next_step_handler(message, click_securities_others)  # следующий шаг обработки
+        # следующий шаг обработки
+        bot.register_next_step_handler(message, click_securities_others)
 
 
 #########################################################################
@@ -623,7 +691,8 @@ def securities_type(message, curr_code):
     p = Read_ISIN_Securities(global_securities_type, curr_code, "", False)
     if p.text_error == "":
         if p.text_result == "":
-            m_message = 'Цінні папери ISIN у ' + curr_code + ' (' + message.text + ') не знайдені.'
+            m_message = ('Цінні папери ISIN у ' + curr_code
+                         + ' (' + message.text + ') не знайдені.')
             on_securities_menu(message, m_message)
             bot.register_next_step_handler(message, on_click_securities)
         else:
@@ -633,9 +702,11 @@ def securities_type(message, curr_code):
                     on_securities_menu(message, m_message[x:x + 4095])
             else:
                 on_securities_menu(message, m_message)
-            bot.register_next_step_handler(message, on_click_securities)  # следующий шаг обработки
+            # следующий шаг обработки
+            bot.register_next_step_handler(message, on_click_securities)
     else:
-        bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+        bot.send_message(message.chat.id,
+                         'Сервіс тимчасово не працює. Спробуйте пізніше.')
         on_click_global(message)
 
 
@@ -644,14 +715,16 @@ def securities_type(message, curr_code):
 #########################################################################
 def on_click_securities_type(message):
     if message.text.endswith('Назад до вибору типу ЦП'):
-        on_securities_menu(message, f'{emoji.emojize(":left_arrow:")} Назад до вибору типу ЦП')
+        on_securities_menu(message, f'{emoji.emojize(":left_arrow:")}'
+                                    f' Назад до вибору типу ЦП')
         bot.register_next_step_handler(message, on_click_securities)
     elif message.text in ('ЦП UAH', 'ЦП USD', 'ЦП EUR'):
         curr_code = message.text.upper()[-3:]
         message.text = get_name_securities_type(global_securities_type).replace("%", "")
         securities_type(message, curr_code)
     else:
-        on_securities_menu(message, f'{emoji.emojize(":left_arrow:")} Назад до вибору типу ЦП')
+        on_securities_menu(message, f'{emoji.emojize(":left_arrow:")}'
+                                    f' Назад до вибору типу ЦП')
         bot.register_next_step_handler(message, on_click_securities)
 
 
@@ -662,7 +735,8 @@ def click_securities_others(message):
     p = Read_ISIN_Securities("", "", message.text.upper().strip(), True)
     if p.text_error == "":
         if p.text_result == "":
-            m_message = 'Цінні папери ISIN = ' + message.text.upper().strip() + ' не знайдені.'
+            m_message = ('Цінні папери ISIN = ' + message.text.upper().strip()
+                         + ' не знайдені.')
             on_securities_menu(message, m_message)
             bot.register_next_step_handler(message, on_click_securities)
         else:
@@ -672,9 +746,11 @@ def click_securities_others(message):
                     on_securities_menu(message, m_message[x:x + 4095])
             else:
                 on_securities_menu(message, m_message)
-            bot.register_next_step_handler(message, on_click_securities)  # следующий шаг обработки
+            # следующий шаг обработки
+            bot.register_next_step_handler(message, on_click_securities)
     else:
-        bot.send_message(message.chat.id, 'Сервіс тимчасово не працює. Спробуйте пізніше.')
+        bot.send_message(message.chat.id,
+                         'Сервіс тимчасово не працює. Спробуйте пізніше.')
         on_click_global(message)
 
 

@@ -33,36 +33,48 @@ class Read_ISIN_Securities:
             # connect sqlite3
             con = sqlite3.connect("./database/securities.db")
             cursor = con.cursor()
-            cursor.execute("""CREATE TABLE IF NOT EXISTS SECUR_ISIN
-                            (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,                               
-                             ISIN TEXT NOT NULL,
-                             NOMINAL INTEGER NOT NULL,
-                             AUK_PROC REAL NOT NULL,
-                             PGS_DATE INTEGER NOT NULL,
-                             CPDESCR TEXT NOT NULL,
-                             CURRENCY_CODE TEXT NOT NULL,
-                             SDATE INTEGER NOT NULL,
-                             FAIR_DATE INTEGER,
-                             FAIR_VALUE REAL
-                             )
-                        """)
-            cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS UK_SECUR_ISIN ON SECUR_ISIN (ISIN)")
+            cursor.execute(
+                """CREATE TABLE IF NOT EXISTS SECUR_ISIN
+                    (ID INTEGER PRIMARY KEY 
+                    AUTOINCREMENT NOT NULL,                               
+                     ISIN TEXT NOT NULL,
+                     NOMINAL INTEGER NOT NULL,
+                     AUK_PROC REAL NOT NULL,
+                     PGS_DATE INTEGER NOT NULL,
+                     CPDESCR TEXT NOT NULL,
+                     CURRENCY_CODE TEXT NOT NULL,
+                     SDATE INTEGER NOT NULL,
+                     FAIR_DATE INTEGER,
+                     FAIR_VALUE REAL
+                     )
+                """)
+            cursor.execute(
+                "CREATE UNIQUE INDEX IF NOT EXISTS "
+                "UK_SECUR_ISIN ON SECUR_ISIN (ISIN)")
 
-            cursor.execute("""CREATE TABLE IF NOT EXISTS SECUR_ISIN_PAY
-                            (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,                               
-                             ISIN_SECUR_ID INTEGER NOT NULL,
-                             PAY_DATE INTEGER NOT NULL,
-                             PAY_TYPE INTEGER NOT NULL,
-                             PAY_VAL REAL NOT NULL,
-                             FOREIGN KEY(ISIN_SECUR_ID) REFERENCES SECUR_ISIN(ID)                           
-                             )
-                        """)
-            cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS UK_SECUR_ISIN_PAY ON SECUR_ISIN_PAY (ISIN_SECUR_ID, "
-                           "PAY_DATE, PAY_TYPE)")
+            cursor.execute(
+                """CREATE TABLE IF NOT EXISTS SECUR_ISIN_PAY
+                (ID INTEGER PRIMARY KEY 
+                AUTOINCREMENT NOT NULL,                               
+                 ISIN_SECUR_ID INTEGER NOT NULL,
+                 PAY_DATE INTEGER NOT NULL,
+                 PAY_TYPE INTEGER NOT NULL,
+                 PAY_VAL REAL NOT NULL,
+                 FOREIGN KEY(ISIN_SECUR_ID) 
+                 REFERENCES SECUR_ISIN(ID)                           
+                 )
+            """)
+            cursor.execute(
+                "CREATE UNIQUE INDEX IF NOT EXISTS UK_SECUR_ISIN_PAY "
+                "ON SECUR_ISIN_PAY (ISIN_SECUR_ID, "
+                "PAY_DATE, PAY_TYPE)")
 
-            # проверяем есть ли обновленные данные по ISIN ЦБ за текущий день, если нет перезаливаем
+            # проверяем есть ли обновленные данные по ISIN ЦБ
+            # за текущий день, если нет перезаливаем
             params = (date.today().strftime("%Y-%m-%d"),)
-            cursor.execute("SELECT COUNT(*) AS KOL FROM SECUR_ISIN S WHERE S.SDATE = ?", params)
+            cursor.execute(
+                "SELECT COUNT(*) AS KOL FROM SECUR_ISIN S "
+                "WHERE S.SDATE = ?", params)
             rows = cursor.fetchone()
             # если нет данных загрузить их
             if rows[0] == 0:
@@ -73,7 +85,9 @@ class Read_ISIN_Securities:
                 for json_line in JSON_object:
                     # возвращаем ID
                     params = (json_line['cpcode'],)
-                    cursor.execute("SELECT COUNT(*) AS KOL, MAX(ID) AS ID FROM SECUR_ISIN S WHERE S.ISIN = ?", params)
+                    cursor.execute(
+                        "SELECT COUNT(*) AS KOL, MAX(ID) AS ID "
+                        "FROM SECUR_ISIN S WHERE S.ISIN = ?", params)
                     rows = cursor.fetchone()
                     if rows[0] == 0:
                         params = (json_line['cpcode'],
@@ -85,12 +99,14 @@ class Read_ISIN_Securities:
                                   date.today().strftime("%Y-%m-%d")
                                   )
                         cursor.execute(
-                            'INSERT INTO SECUR_ISIN(ISIN, NOMINAL, AUK_PROC, PGS_DATE, CPDESCR, CURRENCY_CODE, '
-                            'SDATE) VALUES(?, ?, ?, ?, ?, ?, ?)', params)
+                            'INSERT INTO SECUR_ISIN(ISIN, NOMINAL, AUK_PROC, '
+                            'PGS_DATE, CPDESCR, CURRENCY_CODE, SDATE)'
+                            ' VALUES(?, ?, ?, ?, ?, ?, ?)', params)
 
                         params = (json_line['cpcode'],)
-                        cursor.execute("SELECT COUNT(*) AS KOL, MAX(ID) AS ID FROM SECUR_ISIN S WHERE S.ISIN = ?",
-                                       params)
+                        cursor.execute(
+                            "SELECT COUNT(*) AS KOL, MAX(ID) AS ID FROM SECUR_ISIN S "
+                            "WHERE S.ISIN = ?", params)
                         rows = cursor.fetchone()
                         inserted_id = rows[1]
                     else:
@@ -108,18 +124,22 @@ class Read_ISIN_Securities:
                                   json_line2['pay_val']
                                   )
                         cursor.execute(
-                            "INSERT OR IGNORE INTO SECUR_ISIN_PAY(ISIN_SECUR_ID, PAY_DATE, PAY_TYPE, PAY_VAL) VALUES("
-                            "?, ?, ?, ?)", params)
+                            "INSERT OR IGNORE INTO SECUR_ISIN_PAY"
+                            "(ISIN_SECUR_ID, PAY_DATE, PAY_TYPE, PAY_VAL)"
+                            " VALUES(?, ?, ?, ?)", params)
 
             # Справедливая стоимость ЦБ (котировки НБУ)
             params = (date.today().strftime("%Y-%m-%d"),)
-            cursor.execute("SELECT COUNT(*) AS KOL FROM SECUR_ISIN S WHERE S.FAIR_DATE = ?", params)
+            cursor.execute(
+                "SELECT COUNT(*) AS KOL FROM SECUR_ISIN S "
+                "WHERE S.FAIR_DATE = ?", params)
             rows = cursor.fetchone()
             # если нет данных загрузить их и обновить
             if rows[0] == 0:
                 try:
-                    url = "https://bank.gov.ua/files/Fair_value/" + date.today().strftime(
-                            "%Y%m") + "/" + date.today().strftime("%Y%m%d") + "_fv.txt"
+                    url = ("https://bank.gov.ua/files/Fair_value/" +
+                           date.today().strftime("%Y%m") + "/" +
+                           date.today().strftime("%Y%m%d") + "_fv.txt")
                     response = urllib.request.urlopen(url)
                     lines = [line.decode('cp1251') for line in response.readlines()]
                     cr = csv.reader(lines)
@@ -131,7 +151,8 @@ class Read_ISIN_Securities:
                                   float(split_data[3]),
                                   split_data[1])
                         cursor.execute(
-                            'UPDATE SECUR_ISIN SET FAIR_DATE = ?, FAIR_VALUE = ? WHERE ISIN = ?', params)
+                            'UPDATE SECUR_ISIN SET FAIR_DATE = ?, FAIR_VALUE = ? '
+                            'WHERE ISIN = ?', params)
                 except urllib.error.HTTPError as e:
                     if e.code != 404:
                         raise
@@ -140,9 +161,13 @@ class Read_ISIN_Securities:
                 securities_name = get_name_securities_type(securities_type)
                 params = (securities_name, curr_code)
                 if securities_name.find("%") >= 0:
-                    cursor.execute("SELECT * FROM SECUR_ISIN S WHERE S.CPDESCR like ? AND S.CURRENCY_CODE = ?", params)
+                    cursor.execute(
+                        "SELECT * FROM SECUR_ISIN S WHERE S.CPDESCR like ? "
+                        "AND S.CURRENCY_CODE = ?", params)
                 else:
-                    cursor.execute("SELECT * FROM SECUR_ISIN S WHERE S.CPDESCR = ? AND S.CURRENCY_CODE = ?", params)
+                    cursor.execute(
+                        "SELECT * FROM SECUR_ISIN S WHERE S.CPDESCR = ? "
+                        "AND S.CURRENCY_CODE = ?", params)
                 rows = cursor.fetchall()
             else:
                 params = (securities_isin,)
@@ -168,7 +193,8 @@ class Read_ISIN_Securities:
                 if is_coup_period:
                     params = (row[0],)
                     cursor.execute(
-                        "SELECT * FROM SECUR_ISIN_PAY S WHERE S.ISIN_SECUR_ID = ? AND S.PAY_TYPE = 1 "
+                        "SELECT * FROM SECUR_ISIN_PAY S WHERE "
+                        "S.ISIN_SECUR_ID = ? AND S.PAY_TYPE = 1 "
                         "ORDER BY S.PAY_DATE",
                         params)
                     rows2 = cursor.fetchall()
