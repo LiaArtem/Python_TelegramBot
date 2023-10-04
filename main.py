@@ -96,24 +96,23 @@ def on_click_start(message):
 
     if message.text.endswith('Курси валют') or message.text.lower() == "/curs":
         # выводим новое меню
-        on_curs_menu(message, f'{emoji.emojize(":heavy_dollar_sign:")}'
-                              f' Оберіть валюту')
+        on_curs_menu(message, f'{emoji.emojize(":heavy_dollar_sign:")} Оберіть валюту')
         # следующий шаг обработки
         bot.register_next_step_handler(message, on_click_curs)
 
     elif (message.text.endswith('Конвертер валют')
           or message.text.lower() == "/convert_curs"):
         # выводим новое меню
-        on_convert_curs_menu(message, f'{emoji.emojize(":heavy_dollar_sign:")}'
-                                      f' Оберіть валюти')
+        on_convert_curs_menu(message,
+                             f'{emoji.emojize(":heavy_dollar_sign:")} Оберіть валюти')
         # следующий шаг обработки
         bot.register_next_step_handler(message, on_click_convert_curs)
 
     elif (message.text.endswith('Погода')
           or message.text.lower() == "/weather"):
         # выводим новое меню
-        on_weather_menu(message, f'{emoji.emojize(":cityscape:")}'
-                                 f' Оберіть місто')
+        on_weather_menu(message,
+                        f'{emoji.emojize(":cityscape:")} Оберіть місто')
         # следующий шаг обработки
         bot.register_next_step_handler(message, on_click_weather)
 
@@ -572,9 +571,9 @@ def on_securities_curr_menu_reply(message):
     btn1 = types.KeyboardButton(f'{emoji.emojize(":left_arrow:")}'
                                 f' Назад до вибору типу ЦП')
     markup.row(btn1)
-    bot.send_message(message.chat.id, f'{emoji.emojize(":heavy_dollar_sign:")}'
-                                      f' Виберіть валюту ЦП', parse_mode='html',
-                     reply_markup=markup)
+    bot.send_message(message.chat.id,
+                     f'{emoji.emojize(":heavy_dollar_sign:")} Виберіть валюту ЦП',
+                     parse_mode='html', reply_markup=markup)
     # следующий шаг обработки
     bot.register_next_step_handler(message, on_click_securities_type)
 
@@ -598,9 +597,9 @@ def on_securities_curr_menu_inline(message):
                 types.InlineKeyboardButton(text='EUR', callback_data='securities_eur'),
             ]
         ], row_width=3)
-    bot.send_message(message.chat.id, f'{emoji.emojize(":heavy_dollar_sign:")}'
-                                      f' Виберіть валюту ЦП', parse_mode='html',
-                     reply_markup=markup)
+    bot.send_message(message.chat.id,
+                     f'{emoji.emojize(":heavy_dollar_sign:")} Виберіть валюту ЦП',
+                     parse_mode='html', reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda callback: True)
@@ -715,16 +714,16 @@ def securities_type(message, curr_code):
 #########################################################################
 def on_click_securities_type(message):
     if message.text.endswith('Назад до вибору типу ЦП'):
-        on_securities_menu(message, f'{emoji.emojize(":left_arrow:")}'
-                                    f' Назад до вибору типу ЦП')
+        on_securities_menu(message,
+                           f'{emoji.emojize(":left_arrow:")} Назад до вибору типу ЦП')
         bot.register_next_step_handler(message, on_click_securities)
     elif message.text in ('ЦП UAH', 'ЦП USD', 'ЦП EUR'):
         curr_code = message.text.upper()[-3:]
         message.text = get_name_securities_type(global_securities_type).replace("%", "")
         securities_type(message, curr_code)
     else:
-        on_securities_menu(message, f'{emoji.emojize(":left_arrow:")}'
-                                    f' Назад до вибору типу ЦП')
+        on_securities_menu(message,
+                           f'{emoji.emojize(":left_arrow:")} Назад до вибору типу ЦП')
         bot.register_next_step_handler(message, on_click_securities)
 
 

@@ -38,3 +38,7 @@ IDE - PyCharm Community Edition
 ---------------------------------------------------
 Оновлення пакетів у IDE PyCharm Community Edition:
 -> Settings -> Project:TelegramBot -> Python Interpreter -> Upgrade
+
+PyCharm Community Edition -> Off message Typo: In word 'XXXXX'
+IDE in Settings -> Editor -> Inspections -> Proofreading -> Typo.
+Зняти галки з "Process code" та "Process literals" та "Process comments"
